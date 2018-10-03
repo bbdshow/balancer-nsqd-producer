@@ -7,13 +7,10 @@ import (
 	"github.com/nsqio/go-nsq"
 )
 
-var addrs = map[string]int{
-	"192.168.1.104:4150": 2,
-	"192.168.1.109:4150": 8,
-}
+var addrs = map[string]int{"0.0.0.0:4150": 2}
 
 var opt = Options{
-	Addr:         addrs,
+	Addrs:        addrs,
 	Retry:        2,
 	Mode:         PollingMode,
 	PingInterval: 1,

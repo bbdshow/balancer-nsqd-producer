@@ -11,7 +11,7 @@ import (
 
 type (
 	Options struct {
-		Addr         map[string]int
+		Addrs        map[string]int
 		Retry        int
 		Mode         BalanceMode
 		PingInterval int // s
@@ -46,7 +46,7 @@ var (
 )
 
 type Balancer struct {
-	addr         map[string]int // string nsqd 地址  int 权重 非权重 int = 0
+	addrs        map[string]int // string nsqd 地址  int 权重 非权重 int = 0
 	balanceWay   algorithmMode
 	errConns     chan *ProducerConn // 存在异常的链接， 等待 retryConn 重试链接
 	ErrorsChan   chan error         // nsqd 链接错误
@@ -62,7 +62,7 @@ func NewBalancer(opt Options, config *nsq.Config) (*Balancer, error) {
 	}
 
 	bl := Balancer{
-		addr:         opt.Addr,
+		addrs:        opt.Addrs,
 		pingInterval: opt.PingInterval,
 		pingTimeout:  opt.PingTimeout,
 		errConns:     make(chan *ProducerConn, 100),
@@ -75,7 +75,7 @@ func NewBalancer(opt Options, config *nsq.Config) (*Balancer, error) {
 		return nil, fmt.Errorf("config nil")
 	}
 
-	for addr, wright := range opt.Addr {
+	for addr, wright := range opt.Addrs {
 		pd, err := nsq.NewProducer(addr, config)
 		if err != nil {
 			return nil, err
@@ -110,10 +110,10 @@ func (bl *Balancer) setAlgorithm(mode BalanceMode) {
 }
 
 func Validate(opt Options) error {
-	if len(opt.Addr) == 0 {
+	if len(opt.Addrs) == 0 {
 		return errors.New("invalid addr")
 	}
-	for addr, weight := range opt.Addr {
+	for addr, weight := range opt.Addrs {
 		if weight < 0 {
 			return errors.New(addr + " invalid weight")
 		}

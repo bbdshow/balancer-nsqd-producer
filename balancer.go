@@ -1,11 +1,11 @@
 package producer
 
 import (
-	"balancer-nsqd-producer/algorithm"
 	"errors"
 	"fmt"
 	"time"
 
+	"github.com/hopingtop/balancer-nsqd-producer/algorithm"
 	"github.com/nsqio/go-nsq"
 )
 

@@ -10,6 +10,14 @@
   revision = "2e65f85255dbc3072edf28d6b5b8efc472979f5a"
 
 [[projects]]
+  branch = "master"
+  digest = "1:2f77117ae482fa3654a534e2d279882bbb197c9cb652c52df3ae9158c92a5581"
+  name = "github.com/hopingtop/balancer-nsqd-producer"
+  packages = ["algorithm"]
+  pruneopts = "UT"
+  revision = "73425872144b1b6dcfa2180b3966ff0211dbebd5"
+
+[[projects]]
   digest = "1:bb48459ec76efe45f13094480296462ef5c9aaa56662918819b7a8fce3155b8b"
   name = "github.com/nsqio/go-nsq"
   packages = ["."]
@@ -20,6 +28,9 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  input-imports = ["github.com/nsqio/go-nsq"]
+  input-imports = [
+    "github.com/hopingtop/balancer-nsqd-producer/algorithm",
+    "github.com/nsqio/go-nsq",
+  ]
   solver-name = "gps-cdcl"
   solver-version = 1

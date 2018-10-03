@@ -2,7 +2,10 @@ package main
 
 import (
 	producer "balancer-nsqd-producer"
-	nsq "go-nsq"
+	"fmt"
+	"os"
+
+	"github.com/nsqio/go-nsq"
 )
 
 func main() {
@@ -11,19 +14,20 @@ func main() {
 		"192.168.1.109:4150": 8,
 	}
 
-	var opt = Options{
-		Addr:         addrs,
+	var opt = producer.Options{
+		Addrs:        addrs,
 		Retry:        2,
-		Mode:         PollingMode,
+		Mode:         producer.PollingMode,
 		PingInterval: 1,
 		PingTimeout:  1,
 	}
-	bl, _ := producer.NewBalancer(opt， nsq.NewConfig())
+	bl, _ := producer.NewBalancer(opt, nsq.NewConfig())
 	count := 100
 	for count > 0 {
 		err := bl.Publish("test_polling", []byte(" "))
 		if err != nil {
-			t.Fatal(err)
+			fmt.Println(err)
+			os.Exit(1)
 		}
 		count--
 	}

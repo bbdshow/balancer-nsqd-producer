@@ -18,7 +18,7 @@ func main() {
 		PingInterval: 1,
 		PingTimeout:  1,
 	}
-	bl, _ := producer.NewBalancer(opt nsq.NewConfig())
+	bl, _ := producer.NewBalancer(opt， nsq.NewConfig())
 	count := 100
 	for count > 0 {
 		err := bl.Publish("test_polling", []byte(" "))

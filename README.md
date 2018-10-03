@@ -1,6 +1,9 @@
 # balancer-nsqd-producer
 
-    解决 nsq 消息队列，官方 go-nsq 生产者没有负载均衡的问题。
+[![Build Status](https://travis-ci.org/hopingtop/balancer-nsqd-producer.svg?branch=master)](https://travis-ci.org/hopingtop/balancer-nsqd-producer)
+
+解决 nsq 消息队列，官方 go-nsq 生产者没有负载均衡的问题。
+
 一般 nsqd 都会以集群的方式部署多台，通过负载可以将信息分散的写入 nsqd，有如下考虑：
 
 1. 减少因为 nsqd 异常退出，产生内存数据未及时落盘，导致数据的丢失。

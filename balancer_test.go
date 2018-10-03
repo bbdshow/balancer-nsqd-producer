@@ -56,6 +56,19 @@ func TestWeightPublish(t *testing.T) {
 	}
 }
 
+func TestWeightMultiPublish(t *testing.T) {
+	opt.Mode = SmoothWeightMode
+	balancer, _ := NewBalancer(opt, nsq.NewConfig())
+	count := 100
+	for count > 0 {
+		err := balancer.MultiPublish("test_weight", [][]byte{[]byte(" ")})
+		if err != nil {
+			t.Fatal(err)
+		}
+		count--
+	}
+}
+
 func TestConnsErr(t *testing.T) {
 	opt.Mode = PollingMode
 	balancer, _ := NewBalancer(opt, nsq.NewConfig())

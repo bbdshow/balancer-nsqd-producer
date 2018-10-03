@@ -4,6 +4,7 @@ import (
 	"sync"
 	"sync/atomic"
 	"testing"
+	"time"
 )
 
 func TestSmoothWeight(t *testing.T) {
@@ -11,9 +12,9 @@ func TestSmoothWeight(t *testing.T) {
 
 	var wvalue = map[string]int{
 		"1": 1,
-		"2": 2,
+		"2": 1,
 		"3": 3,
-		"4": 9,
+		"4": 4,
 	}
 
 	for k, v := range wvalue {
@@ -25,6 +26,9 @@ func TestSmoothWeight(t *testing.T) {
 	count := 10000
 	for count > 0 {
 		wg.Add(1)
+		if count%100 == 0 {
+			time.Sleep(time.Millisecond * 10)
+		}
 		go func() {
 			value, _ := smoothWeight.Get()
 			switch value.(string) {

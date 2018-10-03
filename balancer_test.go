@@ -80,7 +80,7 @@ func TestConnsErr(t *testing.T) {
 			balancer.CloseAll()
 		}
 
-		time.Sleep(time.Millisecond * 100)
+		time.Sleep(time.Millisecond * 50)
 		count--
 	}
 

@@ -1,0 +1,29 @@
+language: go
+os: "linux"
+sudo: false
+
+go:
+  - 1.6.x
+  - 1.7.x
+  - 1.8.x
+  - 1.9.x
+  - 1.10.x
+
+notifications:
+  email: false
+
+env:
+ - NSQ_DOWNLOAD=nsq-1.1.0.linux-amd64.go1.10.3
+
+install:
+  - wget -O dep https://github.com/golang/dep/releases/download/v0.4.1/dep-linux-amd64
+  - chmod +x dep
+  - ./dep ensure
+
+script:
+  - wget https://github.com/nsqio/nsq/releases/download/v1.1.0/$NSQ_DOWNLOAD.tar.gz
+  - tar zxvf $NSQ_DOWNLOAD.tar.gz
+  - export PATH=$NSQ_DOWNLOAD/bin:$PATH
+  - pushd $TRAVIS_BUILD_DIR
+  - ./test.sh
+  - popd

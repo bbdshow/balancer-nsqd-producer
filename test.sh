@@ -27,12 +27,13 @@ NSQD_PID=$!
 
 sleep 0.3
 
-cleanup() {
-    echo "killing nsqd PID $NSQD_PID"
-    kill -s TERM $NSQD_PID || cat $NSQD_LOGFILE
-    echo "killing nsqlookupd PID $LOOKUPD_PID"
-    kill -s TERM $LOOKUPD_PID || cat $LOOKUP_LOGFILE
-}
-trap cleanup INT TERM EXIT
+# 还需要跑代码覆盖率
+# cleanup() {
+#     echo "killing nsqd PID $NSQD_PID"
+#     kill -s TERM $NSQD_PID || cat $NSQD_LOGFILE
+#     echo "killing nsqlookupd PID $LOOKUPD_PID"
+#     kill -s TERM $LOOKUPD_PID || cat $LOOKUP_LOGFILE
+# }
+# trap cleanup INT TERM EXIT
 
 go test -v -timeout 30s

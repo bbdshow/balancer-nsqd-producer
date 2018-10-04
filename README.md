@@ -2,6 +2,7 @@
 
 [![Build Status](https://travis-ci.org/hopingtop/balancer-nsqd-producer.svg?branch=master)](https://travis-ci.org/hopingtop/balancer-nsqd-producer)
 [![Go Report Card](https://goreportcard.com/badge/github.com/hopingtop/balancer-nsqd-producer)](https://goreportcard.com/report/github.com/hopingtop/balancer-nsqd-producer)
+[![codecov](https://codecov.io/gh/hopingtop/balancer-nsqd-producer/branch/master/graph/badge.svg)](https://codecov.io/gh/hopingtop/balancer-nsqd-producer)
 
 解决 nsq 消息队列，官方 go-nsq 生产者没有负载均衡的问题。
 

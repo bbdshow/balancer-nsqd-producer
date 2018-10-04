@@ -10,6 +10,7 @@ import (
 )
 
 type (
+	// Options 负载均衡器配置文件
 	Options struct {
 		Addrs        map[string]int
 		Retry        int
@@ -18,13 +19,15 @@ type (
 		PingTimeout  int
 	}
 
-	ProducerConn struct {
+	// Conn nsqd 链接
+	Conn struct {
 		producer *nsq.Producer
 		connAddr string
 		errCount int
 		weight   int
 	}
 
+	// BalanceMode 算法模式
 	BalanceMode int
 
 	algorithmMode interface {
@@ -35,27 +38,30 @@ type (
 	}
 )
 
+// 支持如下算法
 const (
 	PollingMode BalanceMode = iota
 	RandomMode
 	SmoothWeightMode
 )
 
+// error 定义
 var (
 	ErrNoAvailableConns = errors.New("no available conns")
 )
 
+// Balancer 负载均衡生成器
 type Balancer struct {
 	addrs        map[string]int // string nsqd 地址  int 权重 非权重 int = 0
 	balanceWay   algorithmMode
-	errConns     chan *ProducerConn // 存在异常的链接， 等待 retryConn 重试链接
-	ErrorsChan   chan error         // nsqd 链接错误
-	pingInterval int                // retryConn 间隔
-	pingTimeout  int                // pingTimeout ／ retryConn 连续 ping 这么多次，则返回  ErrorsChan
-	retry        int                //如果连续未成功则返回 error
+	errConns     chan *Conn // 存在异常的链接， 等待 retryConn 重试链接
+	ErrorsChan   chan error // nsqd 链接错误
+	pingInterval int        // retryConn 间隔
+	pingTimeout  int        // pingTimeout ／ retryConn 连续 ping 这么多次，则返回  ErrorsChan
+	retry        int        //如果连续未成功则返回 error
 }
 
-// 非权重 int = 0
+// NewBalancer 生成负载均衡器 opt.Addrs 非权重 int = 0  config = nsq.NewConfig()
 func NewBalancer(opt Options, config *nsq.Config) (*Balancer, error) {
 	if err := Validate(opt); err != nil {
 		return nil, err
@@ -65,7 +71,7 @@ func NewBalancer(opt Options, config *nsq.Config) (*Balancer, error) {
 		addrs:        opt.Addrs,
 		pingInterval: opt.PingInterval,
 		pingTimeout:  opt.PingTimeout,
-		errConns:     make(chan *ProducerConn, 100),
+		errConns:     make(chan *Conn, 100),
 		ErrorsChan:   make(chan error, 100),
 		retry:        opt.Retry,
 	}
@@ -81,7 +87,7 @@ func NewBalancer(opt Options, config *nsq.Config) (*Balancer, error) {
 			return nil, err
 		}
 
-		pdConn := ProducerConn{
+		pdConn := Conn{
 			producer: pd,
 			connAddr: addr,
 			errCount: 0,
@@ -109,6 +115,7 @@ func (bl *Balancer) setAlgorithm(mode BalanceMode) {
 	}
 }
 
+// Validate Options 参数验证
 func Validate(opt Options) error {
 	if len(opt.Addrs) == 0 {
 		return errors.New("invalid addr")
@@ -134,6 +141,7 @@ func Validate(opt Options) error {
 	return nil
 }
 
+// Publish 生产消息写入 nsqd
 func (bl *Balancer) Publish(topic string, body []byte) error {
 	retry := bl.retry
 	var err error
@@ -151,7 +159,7 @@ get:
 		goto get
 	}
 
-	conn := pd.(*ProducerConn)
+	conn := pd.(*Conn)
 	if conn == nil {
 		if retry < 0 {
 			return ErrNoAvailableConns
@@ -173,6 +181,7 @@ get:
 	return nil
 }
 
+// MultiPublish 生产多条消息一次写入 nsqd
 func (bl *Balancer) MultiPublish(topic string, body [][]byte) error {
 	retry := bl.retry
 	var err error
@@ -190,7 +199,7 @@ get:
 		goto get
 	}
 
-	conn := pd.(*ProducerConn)
+	conn := pd.(*Conn)
 	if conn == nil {
 		if retry < 0 {
 			return ErrNoAvailableConns
@@ -234,10 +243,11 @@ func (bl *Balancer) retryConns() {
 	}()
 }
 
+// CloseAll 关闭所有链接
 func (bl *Balancer) CloseAll() {
 	objs := bl.balanceWay.GetAll()
 	for _, obj := range objs {
-		conn := obj.(*ProducerConn)
+		conn := obj.(*Conn)
 		if conn != nil {
 			conn.producer.Stop()
 		}

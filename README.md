@@ -25,6 +25,8 @@
 
 ## 使用
 
+	go get github.com/hopingtop/balancer-nsqd-producer
+
 ``` go
 func main() {
 	

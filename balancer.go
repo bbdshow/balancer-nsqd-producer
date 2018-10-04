@@ -1,6 +1,7 @@
 package producer
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"time"
@@ -59,6 +60,8 @@ type Balancer struct {
 	pingInterval int        // retryConn 间隔
 	pingTimeout  int        // pingTimeout ／ retryConn 连续 ping 这么多次，则返回  ErrorsChan
 	retry        int        //如果连续未成功则返回 error
+	ctx          context.Context
+	cancel       context.CancelFunc
 }
 
 // NewBalancer 生成负载均衡器 opt.Addrs 非权重 int = 0  config = nsq.NewConfig()
@@ -75,6 +78,7 @@ func NewBalancer(opt Options, config *nsq.Config) (*Balancer, error) {
 		ErrorsChan:   make(chan error, 100),
 		retry:        opt.Retry,
 	}
+	bl.ctx, bl.cancel = context.WithCancel(context.Background())
 
 	bl.setAlgorithm(opt.Mode)
 	if config == nil {
@@ -222,7 +226,7 @@ get:
 }
 
 func (bl *Balancer) retryConns() {
-	go func() {
+	go func(ctx context.Context) {
 		for {
 			select {
 			case conn := <-bl.errConns:
@@ -238,13 +242,20 @@ func (bl *Balancer) retryConns() {
 				} else {
 					bl.balanceWay.Put(conn, conn.weight)
 				}
+
+			case <-ctx.Done():
+				fmt.Println("retry conns goroutine exiting")
+				return
 			}
 		}
-	}()
+	}(bl.ctx)
 }
 
 // CloseAll 关闭所有链接
 func (bl *Balancer) CloseAll() {
+	// 退出 retryConns goroutine
+	bl.cancel()
+
 	objs := bl.balanceWay.GetAll()
 	for _, obj := range objs {
 		conn := obj.(*Conn)

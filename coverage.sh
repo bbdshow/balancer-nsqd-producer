@@ -11,3 +11,9 @@ for d in $(go list ./... | grep -E 'balancer-nsqd-producer$|algorithm$'); do
         rm profile.out
     fi
 done
+
+echo "mode: goveralls" > profile.out
+$GOPATH/bin/goveralls -coverprofile="profile.out" \
+                          -service=travis-ci    \
+                          -ignore="example" || true
+rm profile.out

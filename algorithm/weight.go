@@ -4,6 +4,7 @@ import (
 	"sync"
 )
 
+// SmoothWeight 平滑权重
 type SmoothWeight struct {
 	objPool   []*weighted
 	lock      sync.Mutex
@@ -18,6 +19,7 @@ type weighted struct {
 	effectiveWeight int
 }
 
+// NewSmoothWeight 轮询
 func NewSmoothWeight() *SmoothWeight {
 	return &SmoothWeight{
 		objPool:   make([]*weighted, 0),
@@ -26,7 +28,7 @@ func NewSmoothWeight() *SmoothWeight {
 	}
 }
 
-// 使用过权重值后，当前分就要减掉使用完的权重值，剩下的权重影响留下一次处理
+//Get 使用过权重值后，当前分就要减掉使用完的权重值，剩下的权重影响留下一次处理
 func (sw *SmoothWeight) Get() (obj interface{}, index int) {
 	sw.lock.Lock()
 	defer sw.lock.Unlock()
@@ -58,6 +60,7 @@ func (sw *SmoothWeight) Get() (obj interface{}, index int) {
 	return obj, -1
 }
 
+// Put 写入到对象池
 func (sw *SmoothWeight) Put(obj interface{}, weight ...int) {
 	sw.lock.Lock()
 	if len(weight) > 0 && weight[0] > 0 {
@@ -73,6 +76,7 @@ func (sw *SmoothWeight) Put(obj interface{}, weight ...int) {
 	sw.lock.Unlock()
 }
 
+// Del 删除对象池 index 索引对象
 func (sw *SmoothWeight) Del(index int) {
 	sw.lock.Lock()
 	if index < sw.length {
@@ -83,6 +87,7 @@ func (sw *SmoothWeight) Del(index int) {
 	sw.lock.Unlock()
 }
 
+// GetAll 获取所有对象
 func (sw *SmoothWeight) GetAll() []interface{} {
 	sw.lock.Lock()
 	objs := []interface{}{}

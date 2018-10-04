@@ -17,9 +17,7 @@ func TestPolling(t *testing.T) {
 	}
 
 	wg := sync.WaitGroup{}
-	var addr1 int32 = 0
-	var addr2 int32 = 0
-	var addr3 int32 = 0
+	var addr1, addr2, addr3 int32 = 0, 0, 0
 
 	count := 3000
 

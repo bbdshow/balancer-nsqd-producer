@@ -24,4 +24,7 @@ script:
   - export PATH=$NSQ_DOWNLOAD/bin:$PATH
   - pushd $TRAVIS_BUILD_DIR
   - ./test.sh
-  - popd
+  - ./coverage.sh
+  
+after_success:
+  - bash <(curl -s https://codecov.io/bash)

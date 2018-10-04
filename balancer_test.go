@@ -98,3 +98,9 @@ func TestConnsErr(t *testing.T) {
 	}
 
 }
+
+func TestValidate(t *testing.T) {
+	if err := Validate(opt); err != nil {
+		t.Fatal(err)
+	}
+}

@@ -1,2 +1,5 @@
 nsqd
 vendor
+profile.out
+count.out
+coverage.out

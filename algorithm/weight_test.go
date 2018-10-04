@@ -7,6 +7,8 @@ import (
 	"time"
 )
 
+var smoothWeight SmoothWeight
+
 func TestSmoothWeight(t *testing.T) {
 	smoothWeight := NewSmoothWeight()
 
@@ -49,6 +51,12 @@ func TestSmoothWeight(t *testing.T) {
 	}
 
 	wg.Wait()
+
+	smoothWeight.Del(0)
+	objs := smoothWeight.GetAll()
+	if len(objs) != 3 {
+		t.Fatal("del err | getAll error")
+	}
 
 	t.Log(addr1, addr2, addr3, addr4)
 }

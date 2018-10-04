@@ -9,10 +9,7 @@ import (
 )
 
 func main() {
-	var addrs = map[string]int{
-		"192.168.1.104:4150": 2,
-		"192.168.1.109:4150": 8,
-	}
+	var addrs = map[string]int{"127.0.0.1:4150": 2}
 
 	var opt = producer.Options{
 		Addrs:        addrs,

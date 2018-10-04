@@ -35,4 +35,4 @@ cleanup() {
 }
 trap cleanup INT TERM EXIT
 
-go test -v -timeout 60s
+go test -v -timeout 30s

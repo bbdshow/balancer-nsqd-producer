@@ -41,5 +41,11 @@ func TestRandom(t *testing.T) {
 
 	wg.Wait()
 
+	random.Del(0)
+	objslen := random.GetAll()
+	if len(objslen) != 3 {
+		t.Fatal("del err | getAll error", len(objslen))
+	}
+
 	t.Log(addr1, addr2, addr3, addr4)
 }

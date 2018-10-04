@@ -45,6 +45,10 @@ func TestPolling(t *testing.T) {
 	}
 
 	polling.Del(0)
+	objs := polling.GetAll()
+	if len(objs) != 2 {
+		t.Fatal("del err | getAll error")
+	}
 
 	addr1 = 0
 	addr2 = 0
@@ -71,4 +75,5 @@ func TestPolling(t *testing.T) {
 	if addr2 != value || addr3 != value {
 		t.Fatal(addr1, addr2, addr3)
 	}
+
 }

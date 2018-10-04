@@ -47,7 +47,7 @@ func (rd *Random) Put(obj interface{}, weight ...int) {
 func (rd *Random) Del(index int) {
 	rd.lock.Lock()
 	if index < rd.length {
-		rd.objPool = append(rd.objPool[:index], rd.objPool[index+1:])
+		rd.objPool = append(rd.objPool[:index], rd.objPool[index+1:]...)
 		rd.length--
 	}
 	rd.lock.Unlock()
